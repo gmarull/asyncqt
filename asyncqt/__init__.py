@@ -36,6 +36,11 @@ try:
 except KeyError:
     QtModule = None
 else:
+    if QtModuleName == 'pyqt5':
+        QtModuleName = 'PyQt5'
+    elif QtModuleName == 'pyside2':
+        QtModuleName = 'PySide2'
+
     logger.info('Forcing use of {} as Qt Implementation'.format(QtModuleName))
     QtModule = importlib.import_module(QtModuleName)
 
