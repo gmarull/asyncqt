@@ -10,6 +10,7 @@ init:
 
 install:
   - pip install -r requirements-dev.txt
+  - pip install -e .
   - pip install PyQt5 PySide2
   - choco install codecov
 

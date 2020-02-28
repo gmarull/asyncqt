@@ -1,0 +1,115 @@
+version: 2.1
+jobs:
+  test35: &test-template
+    working_directory: ~/app
+    docker:
+      - image: circleci/python:3.5
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: pip-{{ checksum "requirements-dev.txt" }}
+
+      - run: pip install -r requirements-dev.txt
+      - run: pip install -e .
+      - run: pip install PyQt5 PySide2
+
+      - save_cache:
+          key: pip-{{ checksum "requirements-dev.txt" }}
+          paths:
+            - ~/.cache/pip
+
+      - run: flake8 asyncqt
+
+      - run: flake8 tests
+
+      - run: |
+            mkdir test-reports
+            QT_QPA_PLATFORM="offscreen" QT_API=PyQt5 xvfb-run pytest -vv --cov=asyncqt --junitxml=test-reports/pyqt5.xml
+            QT_QPA_PLATFORM="offscreen" QT_API=PySide2 xvfb-run pytest -vv --cov=asyncqt --junitxml=test-reports/pyside2.xml
+
+      - store_test_results:
+          path: test-reports
+
+      - run: codecov
+
+  test36:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.6
+
+  test37:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7
+
+  test38:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8
+
+  package:
+    working_directory: ~/app
+    docker:
+      - image: circleci/python:3.5
+
+    steps:
+      - checkout
+      - run: python setup.py sdist
+
+      - store_artifacts:
+          path: dist/
+
+      - persist_to_workspace:
+          root: ~/app
+          paths: .
+
+  deploy-gh:
+    working_directory: ~/app
+    docker:
+      - image: cibuilds/github:latest
+
+    steps:
+      - attach_workspace:
+          at: ~/app
+      - run:
+          name: "publish GitHub release"
+          command: ghr ${CIRCLE_TAG} dist
+
+workflows:
+  version: 2
+  asyncqt-ci:
+    jobs:
+      - test35:
+          filters:
+            tags:
+              only: /.*/
+      - test36:
+          filters:
+            tags:
+              only: /.*/
+      - test37:
+          filters:
+            tags:
+              only: /.*/
+      - test38:
+          filters:
+            tags:
+              only: /.*/
+      - package:
+          filters:
+            tags:
+              only: /.*/
+      - deploy-gh:
+          requires:
+            - test35
+            - test36
+            - test37
+            - test38
+            - package
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/

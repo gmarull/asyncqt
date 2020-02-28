@@ -1,9 +1,8 @@
 asyncqt - asyncio + PyQt5/PySide2
 ======================
 
-.. image:: https://travis-ci.org/gmarull/asyncqt.svg?branch=master
-    :target: https://travis-ci.org/gmarull/asyncqt
-    :alt: Build Status
+.. image:: https://circleci.com/gh/gmarull/asyncqt.svg?style=svg
+    :target: https://circleci.com/gh/gmarull/asyncqt
 
 .. image:: https://ci.appveyor.com/api/projects/status/s74qrypga40somf1?svg=true
     :target: https://ci.appveyor.com/project/gmarull/asyncqt
