@@ -1,0 +1,5 @@
+flake8
+pytest
+pathlib2
+pytest-cov
+codecov
