@@ -648,6 +648,6 @@ def asyncSlot(*args):
         @Slot(*args)
         @functools.wraps(fn)
         def wrapper(*args, **kwargs):
-            asyncio.ensure_future(fn(*args, **kwargs))
+            return asyncio.ensure_future(fn(*args, **kwargs))
         return wrapper
     return outer_decorator
