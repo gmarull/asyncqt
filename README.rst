@@ -1,5 +1,5 @@
 asyncqt - asyncio + PyQt5/PySide2
-======================
+=================================
 
 .. image:: https://circleci.com/gh/gmarull/asyncqt.svg?style=svg
     :target: https://circleci.com/gh/gmarull/asyncqt
